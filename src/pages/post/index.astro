@@ -14,7 +14,7 @@ const newData =
     title: item.title,
     content: item.content,
     slug: item.slug,
-    createdAt: item.createdAt,
+    isPublished: item.isPublished,
   })) ?? [];
 
 const { paginatedItems, totalPages } = paginate(newData, currentPage, 5);

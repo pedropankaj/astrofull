@@ -8,6 +8,18 @@ export const getAllPost = defineAction({
   },
 });
 
+export const getPost = defineAction({
+  input: z.object({
+    id: z.string(),
+  }),
+  handler: async ({ id }) => {
+    const post = await prisma.post.findUnique({
+      where: { id },
+    });
+    return post;
+  },
+});
+
 export const createPost = defineAction({
   //accept: "form",
   input: z.object({
@@ -30,7 +42,7 @@ export const createPost = defineAction({
 });
 
 export const updatePost = defineAction({
-  accept: "form",
+  //  accept: "form",
   input: z.object({
     id: z.string(),
     title: z.string(),
@@ -39,6 +51,7 @@ export const updatePost = defineAction({
     isPublished: z.boolean(),
   }),
   handler: async ({ id, title, content, slug, isPublished }) => {
+    console.log("ACTIOOOOOON", id);
     const post = await prisma.post.update({
       where: { id },
       data: {

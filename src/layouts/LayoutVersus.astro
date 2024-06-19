@@ -1,0 +1,109 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style is:global>
+      @view-transition {
+        navigation: auto; /* enabled! */
+      }
+
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation-duration: 0.5s;
+      }
+
+      /* Selecciona todos los elementos con view-transition-name que comience con "card-" */
+      [view-transition-name^="card-"]::view-transition-old {
+        animation-name: scaleOut;
+      }
+      [view-transition-name^="card-"]::view-transition-new {
+        animation-name: scaleIn;
+      }
+
+      @keyframes scaleIn {
+        from {
+          transform: scale(0);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes scaleOut {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(0);
+        }
+      }
+
+      /* Define view-transition-name para cada card */
+      .card-0 {
+        view-transition-name: card-0;
+      }
+      .card-1 {
+        view-transition-name: card-1;
+      }
+
+      /* Agrega clases para más tarjetas si es necesario */
+      .card-2 {
+        view-transition-name: card-2;
+      }
+      .card-3 {
+        view-transition-name: card-3;
+      }
+
+      .custom-width {
+        width: 1156px;
+      }
+      .left-container {
+        width: 851px;
+        height: 459px;
+      }
+      .right-container {
+        width: 273px;
+        height: 459px;
+      }
+      .card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 0.75rem; /* Rounded corners */
+      }
+      .card img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .card-content {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0.5rem;
+      }
+      .badge {
+        position: absolute;
+        bottom: 100%;
+        left: 0.5rem;
+        background: #ef4444;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: bold;
+        transform: translateY(-50%);
+      }
+      .fixed-height {
+        height: 459px; /* Set height as fixed for both containers */
+      }
+    </style>
+  </head>
+  <body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <slot />
+  </body>
+</html>

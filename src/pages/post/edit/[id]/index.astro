@@ -1,0 +1,28 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+import { PostForm } from "../../../../components/PostForm";
+
+let initialData;
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  initialData = {
+    title: formData.get("title") as string,
+    content: formData.get("content") as string,
+    slug: formData.get("slug") as string,
+    isPublished: Boolean(formData.get("isPublished")),
+    //isPublished: Boolean(formData.get("isPublished")),
+  };
+}
+console.log("VISTA", initialData);
+
+export interface Props {
+  id: string;
+}
+
+const { id } = Astro.params;
+---
+
+<Layout title=`Edit Post`>
+  <PostForm id={id} initialData={initialData} client:load />
+</Layout>

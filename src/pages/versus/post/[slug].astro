@@ -1,0 +1,40 @@
+---
+import LayoutVersus from "../../../layouts/LayoutVersus.astro";
+
+let title: string | undefined;
+let image: string | undefined;
+let count: string | undefined;
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    title = data.get("title");
+    image = data.get("image");
+    count = data.get("count");
+
+    console.log(title);
+    // Do something with the data
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
+const { slug } = Astro.params;
+---
+
+<LayoutVersus>
+  <div
+    class="bg-white custom-width flex flex-col items-center shadow-lg rounded"
+  >
+    <div class=`card-${count} card bg-white shadow rounded`>
+      <img src=`${image}` alt="Card Image 1" />
+      <div class="badge">FÚTBOL PARAGUAYO</div>
+      <div class="card-content">
+        <p class="font-bold text-gray-800">
+          {title}
+        </p>
+      </div>
+    </div>
+  </div>
+</LayoutVersus>

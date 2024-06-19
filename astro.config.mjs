@@ -11,6 +11,9 @@ export default defineConfig({
   integrations: [react(), auth(), tailwind()],
   adapter: vercel(),
   experimental: {
-    actions: true
-  }
+    actions: true,
+  },
+  devToolbar: {
+    enabled: false,
+  },
 });

@@ -1,0 +1,79 @@
+---
+import { usePostStore } from "../../../store/postStore";
+const { slug } = Astro.params;
+
+const post = usePostStore.getState().getPostBySlug(slug);
+const { title, content, updatedAt } = post;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit {title}</title>
+    <script>
+      import { actions } from "astro:actions";
+
+      const createForm = document.querySelector("form") as
+        | HTMLFormElement
+        | undefined;
+
+      if (createForm) {
+        createForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const formData = new FormData(event.target as HTMLFormElement);
+
+          const slug = formData.get("slug") as string | null;
+          const title = formData.get("title") as string | null;
+          const content = formData.get("content") as string | null;
+          const isPublished =
+            formData.get("isPublished") === "on" ? true : false;
+
+          if (slug !== null && title !== null && content !== null) {
+            const { error, data } = await actions.createPost.safe({
+              slug,
+              title,
+              content,
+              isPublished,
+            });
+            if (error) {
+              console.error("Error creating post:", error);
+            } else {
+              console.log("Post created successfully:", data);
+            }
+          } else {
+            console.error("Form values are missing or incorrect");
+          }
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <form>
+      <label>
+        Title:
+        <input type="text" name="title" value={title} required />
+      </label>
+      <br />
+      <label>
+        Content:
+        <textarea name="content" required>{content}</textarea>
+      </label>
+      <br />
+      <label>
+        slug:
+        <input type="text" name="slug" value={slug} required />
+      </label>
+
+      <br />
+      <label>
+        isPublished:
+        <input type="checkbox" name="isPublished" />
+      </label>
+      <br /><br /><br />
+      <input type="submit" value="save" />
+    </form>
+    <p>Last updated: {updatedAt}</p>
+  </body>
+</html>

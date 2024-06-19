@@ -2,23 +2,46 @@ import { actions } from "astro:actions";
 import { useForm } from "react-hook-form";
 import type { FormType } from "../types/post";
 import { Input } from "./ui/input";
-import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { useEffect } from "react";
+interface PostFormProps {
+  id?: string;
+  initialData?: FormType;
+}
 
-export const PostForm = () => {
+export const PostForm = ({ id, initialData }: PostFormProps) => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormType>();
 
-  const handleCreatePost = async (data: FormType) => {
-    //console.log(data);
+  console.log(initialData);
+
+  useEffect(() => {
+    if (initialData) {
+      setValue("title", initialData.title);
+      setValue("content", initialData.content);
+      setValue("slug", initialData.slug || "");
+      setValue("isPublished", initialData.isPublished);
+    }
+  }, [initialData, setValue]);
+
+  const handleFormSubmit = async (data: FormType) => {
     try {
-      //const { data: responseData, error } = await actions.create.safe({title: data.title, content: data.content, slug: data.slug || "", isPublished: data.isPublished});
-      const { data: responseData, error } = await actions.createPost.safe(data);
+      let response;
+      if (id) {
+        //console.log("UPDATEEEE");
+        response = await actions.updatePost.safe({ id, ...data });
+      } else {
+        //console.log("CREATEEEE");
+        response = await actions.createPost.safe(data);
+      }
+      const { data: responseData, error } = response;
       if (responseData) {
         alert(responseData);
+        // console.log(responseData);
       }
       if (error) {
         console.log(error.message);
@@ -30,9 +53,11 @@ export const PostForm = () => {
 
   return (
     <>
-      <h1 className="text-2xl font-bold mb-4">Create Post</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        {id ? "Update Post" : "Create Post"}
+      </h1>
       <form
-        onSubmit={handleSubmit(handleCreatePost)}
+        onSubmit={handleSubmit(handleFormSubmit)}
         className="w-2/3 space-y-6"
       >
         <div className="mb-4">
@@ -41,7 +66,7 @@ export const PostForm = () => {
           </label>
           <Input
             className="w-full p-2 bg-gray-800 border border-gray-700 rounded mt-1"
-            {...register("title", { required: "Title is required" })}
+            {...register("title")}
           />
           {errors.title && <div>{errors.title.message}</div>}
         </div>
@@ -49,7 +74,7 @@ export const PostForm = () => {
           <label htmlFor="content">Content:</label>
           <Textarea
             className="w-full p-2 bg-gray-800 border border-gray-700 rounded mt-1"
-            {...register("content", { required: "Content is required" })}
+            {...register("content")}
           />
           {errors.content && <div>{errors.content.message}</div>}
         </div>
@@ -68,18 +93,19 @@ export const PostForm = () => {
             className="form-checkbox w-4 h-4 text-purple-600 bg-gray-800 border-gray-700 rounded focus:ring-purple-500 mr-2"
             type="checkbox"
             {...register("isPublished")}
+            defaultChecked={initialData?.isPublished}
           />
+
           <label className="block text-sm font-medium" htmlFor="isPublished">
-            is Published:
+            is Published: {initialData?.isPublished}
           </label>
         </div>
-        <Button
+        <Input
           className="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
           type="submit"
           disabled={isSubmitting}
-        >
-          {isSubmitting ? "Creando..." : "Create"}
-        </Button>
+          value={isSubmitting ? "Submitting..." : "Submit"}
+        />
       </form>
     </>
   );

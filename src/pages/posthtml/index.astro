@@ -1,0 +1,28 @@
+---
+import { usePostStore } from "../../store/postStore";
+import { actions } from "astro:actions";
+const { data } = await actions.getAllPost.safe({});
+usePostStore.setState({ posts: data });
+
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="post">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold">Blog Posts</h1>
+    <a
+      href="/posthtml/create"
+      class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+      >Crear Post</a
+    >
+  </div>
+  <ul>
+    {
+      data?.map((post) => (
+        <li>
+          <a href={`/posthtml/edit/${post.slug}`}>{post.title}</a>
+        </li>
+      ))
+    }
+  </ul>
+</Layout>
